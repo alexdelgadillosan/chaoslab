@@ -1,33 +1,56 @@
 # ChaosLab
 
-Distributed systems resilience playground.
+Distributed systems resilience playground — inject latency, kill dependencies, trip circuit breakers, and watch metrics and traces react in real time.
 
-**Problem:** Reliability patterns are hard to *see*. This lab makes latency, failures, and recovery visible in one click.
+**Live demo:** https://alexdelgadillosan.github.io/chaoslab/
 
-**Stack (target):** Polyglot services · queues · OpenTelemetry · Grafana / Aspire-style dashboard · fault injection
+## Problem
 
-**Status:** Scaffold — implementation in progress.
+Reliability patterns are hard to *see*. This lab makes latency, failures, and recovery visible in one click — a client-side ops console that simulates a service topology under chaos.
+
+## Stack
+
+- Vite + TypeScript (SPA)
+- Synthetic metrics, traces, and health state (no backend required)
+- Deployed to GitHub Pages
 
 ## Architecture
 
-UI → API gateway → Service A/B → Redis / PostgreSQL → Queue → Worker (+ inject latency / kill / 500s)
+```
+UI → API gateway → Service A (Redis) → Service B (Postgres) → Queue → Worker
+         ↑ fault injection: latency / kill DB / HTTP 500 / stop worker / dup messages
+```
 
-## What this repo will demonstrate
+Patterns under test: retries with backoff, circuit breaker + fallback, queue recovery with idempotency.
 
-- Inject latency / kill dependency / HTTP 500 storm
-- Retries, circuit breaker, queue recovery
-- Traces and metrics reacting in real time
+## Features
 
-## Demo
+- **Service topology** with live health dots (green / yellow / red)
+- **Chaos controls** — inject 500ms latency, kill database, 50% HTTP 500, stop worker, duplicate messages
+- **Reset** to clear all faults
+- **Telemetry** — latency sparkline, error rate %, queue depth
+- **Trace waterfall** — spans stretch / fail when chaos is active
+- **Status narrative** — e.g. “Circuit breaker OPEN — failing fast”
 
-- Live: _coming soon_
-- Video: _coming soon_
-
-## Run
+## Run locally
 
 ```bash
-# docker compose up  (coming soon)
+npm install
+npm run dev
 ```
+
+Build for production (base path `/chaoslab/`):
+
+```bash
+npm run build
+npm run preview
+```
+
+## Deploy
+
+Push to `main` runs [`.github/workflows/deploy-pages.yml`](.github/workflows/deploy-pages.yml) and publishes to GitHub Pages.
+
+Enable **Settings → Pages → Source: GitHub Actions** on the repo if not already set.
 
 ## Attribution
 
